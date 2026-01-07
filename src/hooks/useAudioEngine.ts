@@ -11,12 +11,44 @@ export function useAudioEngine() {
   
   const audioRefs = useRef<Map<string, HTMLAudioElement>>(new Map());
   const audioContextRef = useRef<AudioContext | null>(null);
+  const animationFrameRef = useRef<number | null>(null);
 
   // Initialize audio context
   useEffect(() => {
     audioContextRef.current = new AudioContext();
     return () => {
       audioContextRef.current?.close();
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
+  }, []);
+
+  // Update current time for playing sounds
+  useEffect(() => {
+    const updateCurrentTime = () => {
+      setSounds(prev => {
+        let hasChanges = false;
+        const updated = prev.map(sound => {
+          if (sound.isPlaying) {
+            const audio = audioRefs.current.get(sound.id);
+            if (audio && Math.abs(audio.currentTime - sound.currentTime) > 0.1) {
+              hasChanges = true;
+              return { ...sound, currentTime: audio.currentTime };
+            }
+          }
+          return sound;
+        });
+        return hasChanges ? updated : prev;
+      });
+      animationFrameRef.current = requestAnimationFrame(updateCurrentTime);
+    };
+
+    animationFrameRef.current = requestAnimationFrame(updateCurrentTime);
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
     };
   }, []);
 
@@ -32,6 +64,7 @@ export function useAudioEngine() {
           file,
           url,
           duration: audio.duration,
+          currentTime: 0,
           volume: 100,
           isPlaying: false,
           isLooping: false,
@@ -78,13 +111,13 @@ export function useAudioEngine() {
     audio.play().catch(console.error);
     
     setSounds(prev => prev.map(s => 
-      s.id === id ? { ...s, isPlaying: true } : s
+      s.id === id ? { ...s, isPlaying: true, currentTime: 0 } : s
     ));
 
     audio.onended = () => {
       if (!sound.isLooping) {
         setSounds(prev => prev.map(s => 
-          s.id === id ? { ...s, isPlaying: false } : s
+          s.id === id ? { ...s, isPlaying: false, currentTime: 0 } : s
         ));
       }
     };
@@ -98,7 +131,7 @@ export function useAudioEngine() {
     }
     
     setSounds(prev => prev.map(s => 
-      s.id === id ? { ...s, isPlaying: false } : s
+      s.id === id ? { ...s, isPlaying: false, currentTime: 0 } : s
     ));
   }, []);
 
@@ -108,7 +141,7 @@ export function useAudioEngine() {
       audio.currentTime = 0;
     });
     
-    setSounds(prev => prev.map(s => ({ ...s, isPlaying: false })));
+    setSounds(prev => prev.map(s => ({ ...s, isPlaying: false, currentTime: 0 })));
   }, []);
 
   const setSoundVolume = useCallback((id: string, volume: number) => {
@@ -121,6 +154,17 @@ export function useAudioEngine() {
       s.id === id ? { ...s, volume } : s
     ));
   }, [settings.masterVolume]);
+
+  const seekSound = useCallback((id: string, time: number) => {
+    const audio = audioRefs.current.get(id);
+    if (audio) {
+      audio.currentTime = time;
+    }
+    
+    setSounds(prev => prev.map(s => 
+      s.id === id ? { ...s, currentTime: time } : s
+    ));
+  }, []);
 
   const toggleLoop = useCallback((id: string) => {
     const audio = audioRefs.current.get(id);
@@ -199,6 +243,7 @@ export function useAudioEngine() {
     stopSound,
     stopAllSounds,
     setSoundVolume,
+    seekSound,
     toggleLoop,
     setHotkey,
     updateSettings,

@@ -1,4 +1,4 @@
-import { Volume2, VolumeX, Square, Settings } from 'lucide-react';
+import { Volume2, VolumeX, Square, Settings, Zap, AudioWaveform } from 'lucide-react';
 import { AudioSettings } from '@/types/audio';
 import { Slider } from '@/components/ui/slider';
 import { cn } from '@/lib/utils';
@@ -21,86 +21,104 @@ export function ControlBar({
   onOpenSettings,
 }: ControlBarProps) {
   return (
-    <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-xl border-b border-border">
+    <header className="sticky top-0 z-50 border-b border-border/50 backdrop-blur-xl bg-background/80">
+      {/* Top neon line */}
+      <div className="h-px bg-gradient-to-r from-transparent via-primary to-transparent" />
+      
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between gap-4">
-          {/* Left: Logo and Stats */}
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg gradient-primary flex items-center justify-center">
-                <Volume2 className="w-4 h-4 text-primary-foreground" />
-              </div>
-              <h1 className="text-lg font-bold text-gradient">SoundBoard</h1>
+          {/* Logo */}
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <AudioWaveform className="w-8 h-8 text-primary" />
+              <div className="absolute inset-0 blur-lg bg-primary/30" />
             </div>
-            
-            <div className="hidden sm:flex items-center gap-3 text-sm text-muted-foreground">
-              <span>{soundCount} sounds</span>
-              {playingCount > 0 && (
-                <span className="flex items-center gap-1 text-primary">
-                  <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                  {playingCount} playing
-                </span>
-              )}
+            <div>
+              <h1 className="font-display font-bold text-lg tracking-[0.2em] text-gradient uppercase">
+                SYNTHWAVE
+              </h1>
+              <p className="text-[10px] font-mono text-muted-foreground tracking-widest -mt-0.5">
+                SOUNDBOARD v2.0
+              </p>
             </div>
           </div>
 
-          {/* Center: Master Volume */}
-          <div className="flex-1 max-w-xs hidden md:flex items-center gap-3">
-            <button
-              onClick={() => onUpdateSettings({ isMuted: !settings.isMuted })}
-              className={cn(
-                "p-2 rounded-md transition-colors",
-                settings.isMuted
-                  ? "bg-destructive/20 text-destructive"
-                  : "bg-secondary text-foreground"
-              )}
-            >
-              {settings.isMuted ? (
-                <VolumeX className="w-5 h-5" />
-              ) : (
-                <Volume2 className="w-5 h-5" />
-              )}
-            </button>
-            
-            <Slider
-              value={[settings.masterVolume]}
-              onValueChange={([v]) => onUpdateSettings({ masterVolume: v })}
-              max={100}
-              step={1}
-              className="flex-1"
-              disabled={settings.isMuted}
-            />
-            
-            <span className="text-sm font-mono text-muted-foreground w-10 text-right">
-              {settings.masterVolume}%
-            </span>
+          {/* Stats */}
+          <div className="hidden sm:flex items-center gap-4 font-mono text-xs">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded bg-muted/50 border border-border">
+              <span className="text-muted-foreground">LOADED</span>
+              <span className="text-primary font-bold">{soundCount}</span>
+            </div>
+            <div className={cn(
+              "flex items-center gap-2 px-3 py-1.5 rounded border transition-all",
+              playingCount > 0 
+                ? "bg-primary/10 border-primary/50 text-primary" 
+                : "bg-muted/50 border-border text-muted-foreground"
+            )}>
+              <Zap className={cn("w-3 h-3", playingCount > 0 && "animate-pulse")} />
+              <span>ACTIVE</span>
+              <span className="font-bold">{playingCount}</span>
+            </div>
           </div>
 
-          {/* Right: Actions */}
-          <div className="flex items-center gap-2">
+          {/* Controls */}
+          <div className="flex items-center gap-3">
+            {/* Master Volume */}
+            <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded bg-muted/30 border border-border">
+              <button
+                onClick={() => onUpdateSettings({ isMuted: !settings.isMuted })}
+                className={cn(
+                  "p-1 rounded transition-all",
+                  settings.isMuted 
+                    ? "text-destructive hover:text-destructive/80" 
+                    : "text-primary hover:text-primary/80"
+                )}
+              >
+                {settings.isMuted ? (
+                  <VolumeX className="w-4 h-4" />
+                ) : (
+                  <Volume2 className="w-4 h-4" />
+                )}
+              </button>
+              <Slider
+                value={[settings.masterVolume]}
+                onValueChange={([v]) => onUpdateSettings({ masterVolume: v })}
+                max={100}
+                step={1}
+                className="w-24"
+              />
+              <span className="text-xs font-mono text-muted-foreground w-8">
+                {settings.masterVolume}%
+              </span>
+            </div>
+
+            {/* Stop All */}
             <button
               onClick={onStopAll}
-              disabled={playingCount === 0}
               className={cn(
-                "px-4 py-2 rounded-md font-medium flex items-center gap-2 transition-all",
+                "flex items-center gap-2 px-4 py-2 rounded font-display font-semibold text-xs tracking-wider uppercase transition-all border",
                 playingCount > 0
-                  ? "bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                  : "bg-secondary text-muted-foreground cursor-not-allowed"
+                  ? "bg-destructive/20 text-destructive border-destructive/50 hover:bg-destructive/30 animate-pulse-glow"
+                  : "bg-muted text-muted-foreground border-border hover:text-foreground"
               )}
             >
-              <Square className="w-4 h-4 fill-current" />
-              <span className="hidden sm:inline">Stop All</span>
+              <Square className="w-3 h-3 fill-current" />
+              <span className="hidden sm:inline">STOP ALL</span>
             </button>
-            
+
+            {/* Settings */}
             <button
               onClick={onOpenSettings}
-              className="p-2 rounded-md bg-secondary text-muted-foreground hover:text-foreground transition-colors"
+              className="p-2 rounded text-muted-foreground hover:text-primary border border-transparent hover:border-primary/50 transition-all"
             >
               <Settings className="w-5 h-5" />
             </button>
           </div>
         </div>
       </div>
-    </div>
+      
+      {/* Bottom gradient line */}
+      <div className="h-px bg-gradient-to-r from-primary/50 via-accent/50 to-secondary/50" />
+    </header>
   );
 }

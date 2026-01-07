@@ -17,6 +17,7 @@ const Index = () => {
     stopSound,
     stopAllSounds,
     setSoundVolume,
+    seekSound,
     toggleLoop,
     setHotkey,
     updateSettings,
@@ -34,7 +35,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen relative">
       <ControlBar
         settings={settings}
         soundCount={sounds.length}
@@ -44,10 +45,18 @@ const Index = () => {
         onOpenSettings={() => setIsSettingsOpen(true)}
       />
 
-      <main className="container mx-auto px-4 py-6">
+      <main className="container mx-auto px-4 py-8">
         {sounds.length === 0 ? (
           <div className="max-w-xl mx-auto animate-fade-in">
             <DropZone onFilesAdded={handleFilesAdded} />
+            
+            {/* Decorative elements */}
+            <div className="mt-12 text-center space-y-4">
+              <div className="neon-line max-w-xs mx-auto" />
+              <p className="font-mono text-xs text-muted-foreground tracking-widest">
+                READY TO LOAD AUDIO FILES
+              </p>
+            </div>
           </div>
         ) : (
           <div className="space-y-6">
@@ -70,6 +79,7 @@ const Index = () => {
                     onStop={() => stopSound(sound.id)}
                     onRemove={() => removeSound(sound.id)}
                     onVolumeChange={(v) => setSoundVolume(sound.id, v)}
+                    onSeek={(t) => seekSound(sound.id, t)}
                     onToggleLoop={() => toggleLoop(sound.id)}
                     onSetHotkey={(h) => setHotkey(sound.id, h)}
                   />

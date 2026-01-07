@@ -4,6 +4,7 @@ export interface SoundFile {
   file: File;
   url: string;
   duration: number;
+  currentTime: number;
   hotkey?: string;
   volume: number;
   isPlaying: boolean;
