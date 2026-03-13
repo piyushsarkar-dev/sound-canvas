@@ -1,7 +1,7 @@
-import { X, Volume2, Keyboard, Info, Cpu, Cable } from 'lucide-react';
-import { AudioSettings } from '@/types/audio';
-import { Slider } from '@/components/ui/slider';
-import { cn } from '@/lib/utils';
+import { Slider } from "@/components/ui/slider";
+import { cn } from "@/lib/utils";
+import { AudioSettings } from "@/types/audio";
+import { Cable, Cpu, Info, Keyboard, Volume2, X } from "lucide-react";
 
 interface SettingsPanelProps {
   isOpen: boolean;
@@ -32,12 +32,11 @@ export function SettingsPanel({
           "fixed top-0 right-0 h-full w-full max-w-md z-50 border-l border-primary/30",
           "bg-gradient-to-b from-card to-background",
           "transform transition-transform duration-300 ease-out",
-          isOpen ? "translate-x-0" : "translate-x-full"
-        )}
-      >
+          isOpen ? "translate-x-0" : "translate-x-full",
+        )}>
         {/* Neon edge */}
         <div className="absolute left-0 top-0 bottom-0 w-px bg-gradient-to-b from-primary via-accent to-secondary" />
-        
+
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-border">
           <div className="flex items-center gap-3">
@@ -48,8 +47,7 @@ export function SettingsPanel({
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-          >
+            className="p-2 rounded text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -108,8 +106,7 @@ export function SettingsPanel({
                 href="https://vb-audio.com/Cable/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-xs text-secondary hover:text-secondary/80 font-mono transition-colors"
-              >
+                className="inline-flex items-center gap-2 text-xs text-secondary hover:text-secondary/80 font-mono transition-colors">
                 → Download VB-CABLE
               </a>
             </div>
