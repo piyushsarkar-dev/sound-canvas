@@ -1,8 +1,17 @@
-import { useState } from 'react';
-import { Play, Square, Repeat, Volume2, Trash2, Keyboard, SkipBack, SkipForward } from 'lucide-react';
-import { SoundFile } from '@/types/audio';
-import { Slider } from '@/components/ui/slider';
-import { cn } from '@/lib/utils';
+import { Slider } from "@/components/ui/slider";
+import { cn } from "@/lib/utils";
+import { SoundFile } from "@/types/audio";
+import {
+  Keyboard,
+  Play,
+  Repeat,
+  SkipBack,
+  SkipForward,
+  Square,
+  Trash2,
+  Volume2,
+} from "lucide-react";
+import { useState } from "react";
 
 interface SoundCardProps {
   sound: SoundFile;
@@ -30,7 +39,7 @@ export function SoundCard({
   const formatDuration = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
   const handleHotkeyCapture = (e: React.KeyboardEvent) => {
@@ -55,11 +64,10 @@ export function SoundCard({
     <div
       className={cn(
         "group relative rounded-lg p-4 transition-all duration-500",
-        sound.isPlaying 
-          ? "gradient-card-active glow-primary" 
-          : "gradient-card hover:border-primary/40"
-      )}
-    >
+        sound.isPlaying ?
+          "gradient-card-active glow-primary"
+        : "gradient-card hover:border-primary/40",
+      )}>
       {/* Cyber corner decorations */}
       <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-primary/60" />
       <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-primary/60" />
@@ -86,14 +94,14 @@ export function SoundCard({
             {sound.name}
           </h3>
           <p className="text-xs text-muted-foreground font-mono mt-0.5">
-            {formatDuration(sound.currentTime)} / {formatDuration(sound.duration)}
+            {formatDuration(sound.currentTime)} /{" "}
+            {formatDuration(sound.duration)}
           </p>
         </div>
-        
+
         <button
           onClick={onRemove}
-          className="opacity-0 group-hover:opacity-100 p-1 text-muted-foreground hover:text-destructive transition-all"
-        >
+          className="opacity-0 group-hover:opacity-100 p-1 text-muted-foreground hover:text-destructive transition-all">
           <Trash2 className="w-4 h-4" />
         </button>
       </div>
@@ -103,8 +111,7 @@ export function SoundCard({
         <button
           onClick={skipBackward}
           className="p-1 text-muted-foreground hover:text-primary transition-colors"
-          title="Skip -5s"
-        >
+          title="Skip -5s">
           <SkipBack className="w-3.5 h-3.5" />
         </button>
         <Slider
@@ -117,8 +124,7 @@ export function SoundCard({
         <button
           onClick={skipForward}
           className="p-1 text-muted-foreground hover:text-primary transition-colors"
-          title="Skip +5s"
-        >
+          title="Skip +5s">
           <SkipForward className="w-3.5 h-3.5" />
         </button>
       </div>
@@ -128,22 +134,20 @@ export function SoundCard({
         onClick={sound.isPlaying ? onStop : onPlay}
         className={cn(
           "w-full py-2.5 rounded flex items-center justify-center gap-2 font-display font-semibold text-sm tracking-wider uppercase transition-all",
-          sound.isPlaying
-            ? "bg-destructive/20 text-destructive border border-destructive/50 hover:bg-destructive/30"
-            : "bg-primary/10 text-primary border border-primary/50 hover:bg-primary/20 hover:shadow-[0_0_15px_hsl(var(--primary)/0.3)]"
-        )}
-      >
-        {sound.isPlaying ? (
+          sound.isPlaying ?
+            "bg-destructive/20 text-destructive border border-destructive/50 hover:bg-destructive/30"
+          : "bg-primary/10 text-primary border border-primary/50 hover:bg-primary/20 hover:shadow-[0_0_15px_hsl(var(--primary)/0.3)]",
+        )}>
+        {sound.isPlaying ?
           <>
             <Square className="w-3.5 h-3.5 fill-current" />
             STOP
           </>
-        ) : (
-          <>
+        : <>
             <Play className="w-3.5 h-3.5 fill-current" />
             PLAY
           </>
-        )}
+        }
       </button>
 
       {/* Volume Slider */}
@@ -167,28 +171,25 @@ export function SoundCard({
           onClick={onToggleLoop}
           className={cn(
             "flex-1 py-1.5 rounded text-xs font-display font-medium flex items-center justify-center gap-1 transition-all tracking-wide uppercase",
-            sound.isLooping
-              ? "bg-secondary/20 text-secondary border border-secondary/50"
-              : "bg-muted text-muted-foreground border border-transparent hover:text-foreground hover:border-border"
-          )}
-        >
+            sound.isLooping ?
+              "bg-secondary/20 text-secondary border border-secondary/50"
+            : "bg-muted text-muted-foreground border border-transparent hover:text-foreground hover:border-border",
+          )}>
           <Repeat className="w-3 h-3" />
           Loop
         </button>
-        
+
         <button
           onClick={() => setIsSettingHotkey(true)}
           onKeyDown={handleHotkeyCapture}
           onBlur={() => setIsSettingHotkey(false)}
           className={cn(
             "flex-1 py-1.5 rounded text-xs font-display font-medium flex items-center justify-center gap-1 transition-all tracking-wide uppercase",
-            isSettingHotkey
-              ? "bg-warning/20 text-warning border border-warning ring-1 ring-warning"
-              : sound.hotkey
-              ? "bg-accent/20 text-accent border border-accent/50"
-              : "bg-muted text-muted-foreground border border-transparent hover:text-foreground hover:border-border"
-          )}
-        >
+            isSettingHotkey ?
+              "bg-warning/20 text-warning border border-warning ring-1 ring-warning"
+            : sound.hotkey ? "bg-accent/20 text-accent border border-accent/50"
+            : "bg-muted text-muted-foreground border border-transparent hover:text-foreground hover:border-border",
+          )}>
           <Keyboard className="w-3 h-3" />
           {isSettingHotkey ? "..." : sound.hotkey || "KEY"}
         </button>
