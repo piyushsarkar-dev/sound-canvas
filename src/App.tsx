@@ -19,6 +19,7 @@ const App = () => (
             path="/"
             element={<Index />}
           />
+
           <Route
             path="*"
             element={<NotFound />}
